@@ -11,7 +11,7 @@ export default function Login() {
     e.preventDefault();
 
     try {
-      
+      await api.login(email, password);
       navigate('/todos');
     } catch (e) {
       console.error(e);

@@ -13,7 +13,7 @@ export default function Signup() {
   const signup = async (e: FormEvent<EventTarget>) => {
     e.preventDefault();
     try {
-      
+      await api.createAccount(email, password, name);
       navigate('/todos');
     } catch (error: any) {
       setAlert(error.message);

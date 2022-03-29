@@ -23,15 +23,21 @@ export default function Todos() {
   }, []);
 
   useEffect(() => {
-    // set user
-
+    api.getAccount().then((data) => {
+      setUser(data.$id);
+    });
   }, [])
 
   async function handleAdd(e: any) {
     e.preventDefault();
     try {
-      // create document
-
+      await api.createDocument('todos', {
+        content,
+        isComplete: false
+      },
+      [`user:${user}`],
+      [`user:${user}`],
+      );
 
       loadTodos();
     } catch (error: any) {
@@ -45,8 +51,16 @@ export default function Todos() {
   ) {
     e.preventDefault();
 
-    // update document
-
+    await api.updateDocument(
+      'todos',
+      todo.$id,
+      {
+        ...todo,
+        isComplete: !todo.isComplete,
+      },
+      [`user:${user}`],
+      [`user:${user}`],
+    );
 
     loadTodos();
   }
@@ -57,15 +71,14 @@ export default function Todos() {
   ) {
     e.preventDefault();
 
-    // delete document
+    await api.deleteDocument('todos', item.$id);
 
     loadTodos();
   }
 
   async function handleLogout() {
     try {
-      // logout
-      
+      await api.deleteCurrentSession();
     } catch (e) {
 
     }
