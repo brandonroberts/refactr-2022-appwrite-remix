@@ -1,6 +1,8 @@
-import { Appwrite } from 'appwrite';
+import { Account, Client, Databases } from 'appwrite';
 
-let appwrite = new Appwrite();
+let appwrite = new Client();
+let account = new Account(appwrite);
+let databases = new Databases(appwrite);
 let api = {
   sdk: appwrite,
 
@@ -10,11 +12,14 @@ let api = {
       api.sdk.setProject('todos');
     }
 
-    return api.sdk;
+    return {
+      account,
+      database: databases
+    };
   },
 
   login(email: string, password: string) {
-    return api.provider().account.createSession(email, password);
+    return api.provider().account.createEmailSession(email, password);
   },
 
   createAccount: (email: string, password: string, name: string) => {
@@ -30,11 +35,11 @@ let api = {
   },
 
   setJWT: (jwt: string) => {
-    api.provider().setJWT(jwt.toString())
+    api.sdk.setJWT(jwt.toString())
   },
 
   createSession: (email: string, password: string) => {
-    return api.provider().account.createSession(email, password);
+    return api.provider().account.createEmailSession(email, password);
   },
 
   deleteCurrentSession: () => {
@@ -42,34 +47,32 @@ let api = {
   },
 
   createDocument: (
+    databaseId: string,
     collectionId: string,
-    data: any,
-    read: string[],
-    write: string[]
+    data: any
   ) => {
     return api
       .provider()
-      .database.createDocument(collectionId, 'unique()', data, read, write);
+      .database.createDocument(databaseId, collectionId, 'unique()', data);
   },
 
-  listDocuments: (collectionId: string) => {
-    return api.provider().database.listDocuments(collectionId);
+  listDocuments: (databaseId: string, collectionId: string) => {
+    return api.provider().database.listDocuments(databaseId, collectionId);
   },
 
   updateDocument: (
+    databaseId: string,
     collectionId: string,
     documentId: string,
-    data: any,
-    read: string[],
-    write: string[]
+    data: any
   ) => {
     return api
       .provider()
-      .database.updateDocument(collectionId, documentId, data, read, write);
+      .database.updateDocument(databaseId, collectionId, documentId, data);
   },
 
-  deleteDocument: (collectionId: string, documentId: string) => {
-    return api.provider().database.deleteDocument(collectionId, documentId);
+  deleteDocument: (databaseId: string, collectionId: string, documentId: string) => {
+    return api.provider().database.deleteDocument(databaseId, collectionId, documentId);
   },
 };
 

@@ -13,7 +13,7 @@ export default function Todos() {
   const navigate = useNavigate();
 
   function loadTodos() {
-    api.listDocuments('todos').then((data) => {
+    api.listDocuments('todos', 'todos').then((data) => {
       setTodos(data.documents);
     });
   }
@@ -31,12 +31,10 @@ export default function Todos() {
   async function handleAdd(e: any) {
     e.preventDefault();
     try {
-      await api.createDocument('todos', {
+      await api.createDocument('todos', 'todos', {
         content,
         isComplete: false
-      },
-      [`user:${user}`],
-      [`user:${user}`],
+      }
       );
 
       loadTodos();
@@ -53,13 +51,15 @@ export default function Todos() {
 
     await api.updateDocument(
       'todos',
+      'todos',
       todo.$id,
       {
         ...todo,
+        $collectionId: undefined,
+        $databaseId: undefined,
+        $permissions: undefined,
         isComplete: !todo.isComplete,
-      },
-      [`user:${user}`],
-      [`user:${user}`],
+      }
     );
 
     loadTodos();
@@ -71,7 +71,7 @@ export default function Todos() {
   ) {
     e.preventDefault();
 
-    await api.deleteDocument('todos', item.$id);
+    await api.deleteDocument('todos', 'todos', item.$id);
 
     loadTodos();
   }
